@@ -1,0 +1,544 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Atmospheric Chemistry — Live Class Demos</title>
+<style>
+:root{--bg:#0d1117;--panel:#161b22;--line:#30363d;--text:#f5f5f5;--muted:#b8c0cc;--green:#72e799;--blue:#6cb6ff;--amber:#ffb454;--red:#ff7b72;--violet:#c9a3ff}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:Arial,Helvetica,sans-serif}
+body{font-size:clamp(15px,1.3vw,24px);line-height:1.35}
+header{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:1rem;padding:.45rem 1rem;background:#0a0d12;border-bottom:1px solid var(--line)}
+.brand{font-weight:700;color:var(--green);white-space:nowrap}
+nav{display:flex;gap:.2rem;flex-wrap:wrap;flex:1}
+nav a{color:var(--muted);text-decoration:none;padding:.3rem .6rem;border-radius:.4rem;font-size:.82em}
+nav a:hover{color:var(--text)}
+nav a.on{background:var(--green);color:#06210f;font-weight:700}
+main{padding:.8rem 1.4rem 2rem}
+.mod{display:none}.mod.on{display:block}
+h1{margin:.1rem 0 .5rem;font-size:1.9em}
+h2{margin:.2rem 0 .5rem;font-size:1.25em;color:var(--green)}
+p{margin:.35rem 0}
+.sub{color:var(--muted);margin-top:-.3rem;margin-bottom:.7rem}
+.grid{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(0,1fr);gap:1.1rem;align-items:start}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:.8rem;padding:.9rem 1rem;margin-bottom:1rem}
+canvas{width:100%;display:block;border-radius:.6rem;background:#0a0d12;touch-action:none}
+.big{font-size:1.9em;font-weight:700;line-height:1.1}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:.25rem .9rem;align-items:baseline}
+.kv b{color:var(--muted);font-weight:400}
+.prompt{border-left:6px solid var(--amber);background:#2a2113;padding:.6rem .9rem;border-radius:.5rem;margin:.6rem 0}
+.prompt b{color:var(--amber)}
+.answer{display:none;border-left:6px solid var(--green);background:#11281a;padding:.6rem .9rem;border-radius:.5rem;margin:.5rem 0}
+.answer.shown{display:block}
+.row{display:flex;gap:.45rem;flex-wrap:wrap;align-items:center;margin:.4rem 0}
+button{font:inherit;font-size:.85em;padding:.42rem .85rem;border-radius:.5rem;border:1px solid var(--line);background:#21262d;color:var(--text);cursor:pointer}
+button:hover{border-color:var(--muted)}
+button.primary,button.reveal{background:var(--green);color:#06210f;border-color:var(--green);font-weight:700}
+button.sel{background:var(--blue);color:#04162b;border-color:var(--blue);font-weight:700}
+input[type=range]{width:100%;height:2rem;accent-color:var(--green);cursor:pointer}
+.note{color:var(--muted);font-size:.78em}
+.yes{color:var(--green);font-weight:700}.no{color:#6e7681;font-weight:700}
+.eq{font-family:"Cambria Math","Times New Roman",serif;font-size:1.05em}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(16rem,1fr));gap:1rem}
+.card{display:block;text-decoration:none;color:var(--text);background:var(--panel);border:1px solid var(--line);border-radius:.8rem;padding:1rem}
+.card:hover{border-color:var(--green)}
+.card .n{color:var(--green);font-weight:700;font-size:1.15em}
+.proc{display:grid;grid-template-columns:2.2fr 1fr 2.4fr .9fr;gap:.5rem;align-items:center;padding:.3rem 0;border-bottom:1px solid var(--line);font-size:.88em}
+.bar{height:.8rem;background:#0a0d12;border-radius:.4rem;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--green)}
+.tag{font-size:.7em;padding:.05rem .35rem;border-radius:.3rem;margin-right:.3rem;vertical-align:middle}
+.t-ion{background:#3b2a5c;color:var(--violet)}.t-diss{background:#173a5c;color:var(--blue)}
+.opt{display:block;width:100%;text-align:left;margin:.4rem 0;padding:.7rem 1rem;font-size:1em}
+.opt.right{background:#11281a;border-color:var(--green)}
+.opt.wrong{opacity:.45}
+kbd{background:#21262d;border:1px solid var(--line);border-radius:.3rem;padding:0 .35rem;font-size:.85em}
+@media (max-width:900px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">Atmospheric Chemistry · 18.1–18.2</div>
+  <nav id="nav">
+    <a href="#home">Home</a><a href="#atmosphere">1 Layers</a><a href="#photons">2 Photons</a><a href="#ozone">3 Ozone &amp; Cl</a><a href="#smog">4 Smog</a><a href="#vibrations">5 Greenhouse 3D</a><a href="#co2">6 CO₂ AI</a><a href="#quiz">7 Quick check</a>
+  </nav>
+  <button id="fsBtn" title="Full screen (F)">⛶ Full screen</button>
+</header>
+<main>
+
+<!-- HOME -->
+<section id="home" class="mod">
+  <h1>Live class demos</h1>
+  <p class="sub">The presenter controls everything on the projector, so students do not need devices. Ask the class to predict first, then reveal the answer.</p>
+  <div class="cards">
+    <a class="card" href="#atmosphere"><div class="n">1 · Fly up through the atmosphere</div>See how temperature, pressure and the share of air above change with altitude, from the ground to the aurora.</a>
+    <a class="card" href="#photons"><div class="n">2 · Photon energy lab</div>Change the wavelength and calculate E = hc/λ to see which bonds break and which molecules ionize.</a>
+    <a class="card" href="#ozone"><div class="n">3 · Ozone vs. chlorine</div>Release chlorine atoms and watch one catalyst destroy many ozone molecules.</a>
+    <a class="card" href="#smog"><div class="n">4 · A smoggy day</div>Follow NO, NO₂ and O₃ through a sunny city day, then switch on catalytic converters.</a>
+    <a class="card" href="#vibrations"><div class="n">5 · Why CO₂ traps heat (3D)</div>Rotate vibrating molecules and see whether their dipole changes; only then can they absorb IR.</a>
+    <a class="card" href="#co2"><div class="n">6 · Can AI forecast CO₂?</div>Train a model on real NOAA Mauna Loa data, hide the newest year, and compare the model with the class prediction.</a>
+    <a class="card" href="#quiz"><div class="n">7 · Quick check</div>Hand-raise multiple-choice questions on acid rain, CO, smog, ozone and the aurora.</a>
+  </div>
+  <div class="panel" style="margin-top:1rem">
+    <h2>Presenter keys</h2>
+    <p><kbd>F</kbd> full screen · <kbd>R</kbd> reveal the next answer · <kbd>PgDn</kbd>/<kbd>PgUp</kbd> next or previous demo · click and drag the 3D molecules.</p>
+    <p class="note">These are teaching models. The atmosphere profile is an approximate standard atmosphere, and the ozone and smog simulations are simplified and qualitative. The CO₂ data are a NOAA Global Monitoring Laboratory Mauna Loa monthly snapshot through 2026-09.</p>
+  </div>
+</section>
+
+<!-- ATMOSPHERE -->
+<section id="atmosphere" class="mod">
+  <h1>Fly up through the atmosphere</h1>
+  <div class="grid">
+    <div>
+      <canvas id="atmC" style="height:66vh"></canvas>
+      <div class="row"><input id="atmZ" type="range" min="0" max="120" step="0.5" value="0"></div>
+      <div class="row"><button class="primary" id="atmTour">▶ Launch tour</button><button data-z="0">Ground</button><button data-z="8.8">Everest</button><button data-z="25">Ozone peak</button><button data-z="50">Stratopause</button><button data-z="85">Coldest</button><button data-z="110">Aurora</button></div>
+    </div>
+    <div>
+      <div class="panel">
+        <div class="big" id="atmAlt">0 km</div>
+        <div id="atmLayer" style="font-size:1.25em;font-weight:700;margin:.2rem 0 .5rem"></div>
+        <div class="kv">
+          <b>Temperature</b><span id="atmT"></span>
+          <b>Pressure</b><span id="atmP"></span>
+          <b>Air below you</b><span id="atmBelow"></span>
+        </div>
+        <p id="atmInfo" style="margin-top:.6rem"></p>
+      </div>
+      <div class="prompt"><b>Predict:</b> Temperature falls as we climb. Why does it start rising again above about 20 km?</div>
+      <button class="reveal" data-for="atmA1">Reveal</button>
+      <div class="answer" id="atmA1">Ozone absorbs UV light (O₃ + hν → O₂ + O) and turns that energy into heat, so the <b>stratosphere</b> warms with height. The thermosphere is also hot because O₂, N₂ and O absorb very high-energy UV.</div>
+      <div class="prompt"><b>Predict:</b> At what altitude is half of the atmosphere below you?</div>
+      <button class="reveal" data-for="atmA2">Reveal</button>
+      <div class="answer" id="atmA2">At only about <b>5.5 km</b>. Pressure falls roughly exponentially, so about 99% of the air is below about 31 km. Use the slider to check.</div>
+    </div>
+  </div>
+</section>
+
+<!-- PHOTONS -->
+<section id="photons" class="mod">
+  <h1>Photon energy lab: break it or ionize it?</h1>
+  <div class="grid">
+    <div>
+      <canvas id="phC" style="height:24vh"></canvas>
+      <div class="row"><input id="phL" type="range" min="0" max="1000" step="1"></div>
+      <div class="row"><span class="note">Jump to:</span><button data-nm="80">80 nm</button><button data-nm="100">100 nm</button><button data-nm="242">242 nm</button><button data-nm="300">300 nm</button><button data-nm="393">393 nm</button><button data-nm="550">550 nm</button><button data-nm="1000">1000 nm</button></div>
+      <div class="panel" id="phRows"></div>
+    </div>
+    <div>
+      <div class="panel">
+        <div class="big"><span id="phNm"></span> nm</div>
+        <div id="phRegion" style="font-weight:700;margin:.3rem 0"></div>
+        <div class="big" style="color:var(--green)"><span id="phKJ"></span> kJ/mol</div>
+        <p class="eq" id="phCalc" style="margin-top:.6rem"></p>
+      </div>
+      <div class="prompt"><b>Predict:</b> Does it take more energy to <i>break</i> O₂ into two O atoms or to <i>remove an electron</i> from O₂? Which needs the shorter wavelength?</div>
+      <button class="reveal" data-for="phA1">Reveal</button>
+      <div class="answer" id="phA1"><b>Photoionization</b> (1205 kJ/mol, λ ≤ 99 nm) needs much more energy than <b>photodissociation</b> (495 kJ/mol, λ ≤ 242 nm). Only the shortest-wavelength UV can ionize molecules, and that light is absorbed high in the thermosphere.</div>
+      <p class="note">A photon must have at least the threshold energy, and the molecule must also be able to absorb that wavelength. Energy values come from Table 18.3 and the textbook bond energies.</p>
+    </div>
+  </div>
+</section>
+
+<!-- OZONE -->
+<section id="ozone" class="mod">
+  <h1>Ozone vs. chlorine: one catalyst, many victims</h1>
+  <div class="grid">
+    <div>
+      <canvas id="ozC" style="height:50vh"></canvas>
+      <canvas id="ozH" style="height:14vh;margin-top:.5rem"></canvas>
+      <div class="row">
+        <button class="primary" id="oz1">Release 1 Cl</button>
+        <button id="oz10">Release 10 Cl</button>
+        <button id="ozEmit">CFC emissions: OFF</button>
+        <button id="ozSink" class="sel">Cl sinks (HCl, ClONO₂): ON</button>
+        <button id="ozReset">Reset</button>
+      </div>
+    </div>
+    <div>
+      <div class="panel">
+        <div class="kv">
+          <b>Ozone</b><span class="big" id="ozN"></span>
+          <b>O₃ destroyed by Cl</b><span id="ozD"></span>
+          <b>Active Cl / ClO</b><span id="ozA"></span>
+          <b>Cl atoms released</b><span id="ozR"></span>
+          <b>O₃ destroyed per Cl</b><span id="ozPer" style="color:var(--amber);font-weight:700"></span>
+        </div>
+      </div>
+      <div class="panel eq" style="font-size:.95em">
+        <div>CF₂Cl₂ + hν → CF₂Cl + <span style="color:var(--green)">Cl</span></div>
+        <div><span style="color:var(--green)">Cl</span> + O₃ → ClO + O₂</div>
+        <div>ClO + O → <span style="color:var(--green)">Cl</span> + O₂</div>
+        <div style="border-top:1px solid var(--line);margin-top:.3rem;padding-top:.3rem"><b>Net:</b> O₃ + O → 2 O₂ &nbsp;<span class="note">(Cl is regenerated, so it is a catalyst)</span></div>
+      </div>
+      <div class="prompt"><b>Predict:</b> How many ozone molecules can one Cl atom destroy before it is trapped in a reservoir such as HCl?</div>
+      <button class="reveal" data-for="ozA1">Reveal</button>
+      <div class="answer" id="ozA1">In this scaled-down model, the answer is tens. In the real stratosphere, it is on the order of <b>100,000</b>. Because CFCs last for decades, the 1987 <b>Montreal Protocol</b> ban takes decades to repair the ozone layer. The Antarctic ozone hole is projected to recover around the 2060s.</div>
+      <p class="note">This is a conceptual particle model. Blue triangles are O₃ molecules, green circles are Cl atoms, and green and red pairs are ClO molecules. Sunlight continually makes new O₃.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SMOG -->
+<section id="smog" class="mod">
+  <h1>A smoggy day in the city</h1>
+  <div class="grid">
+    <div>
+      <canvas id="smSky" style="height:15vh"></canvas>
+      <canvas id="smC" style="height:46vh;margin-top:.5rem"></canvas>
+      <div class="row"><input id="smT" type="range" min="0" max="24" step="0.1" value="6"></div>
+      <div class="row"><button class="primary" id="smPlay">▶ Play day</button><button id="smCat">Catalytic converters: OFF</button><button id="smSun" class="sel">Weather: sunny</button></div>
+    </div>
+    <div>
+      <div class="panel">
+        <div class="big" id="smClock"></div>
+        <div class="kv" style="margin-top:.4rem">
+          <b style="color:#ff9b6a">NO</b><span id="smNO"></span>
+          <b style="color:#c08a3e">NO₂</b><span id="smNO2"></span>
+          <b style="color:var(--blue)">O₃</b><span id="smO3"></span>
+        </div>
+        <p id="smStage" class="eq" style="margin-top:.6rem"></p>
+      </div>
+      <div class="prompt"><b>Predict:</b> Traffic peaks around 7–9 a.m. Why does ozone peak in the <i>afternoon</i>?</div>
+      <button class="reveal" data-for="smA1">Reveal</button>
+      <div class="answer" id="smA1">O₃ is a <b>secondary</b> pollutant. Cars emit NO, which becomes brown NO₂. Sunlight then splits NO₂ (λ &lt; 393 nm) into NO + O, and O + O₂ + M → O₃ + M. That takes time and strong sunlight, so ozone peaks around midday and in the afternoon.</div>
+      <div class="prompt"><b>Predict:</b> Do catalytic converters <i>filter</i> pollutants out?</div>
+      <button class="reveal" data-for="smA2">Reveal</button>
+      <div class="answer" id="smA2">No. They <b>chemically convert</b> pollutants: CO and hydrocarbons become CO₂ + H₂O, and NO becomes N₂, using Pt, Pd and Rh catalysts. Turn them on and watch the curves drop.</div>
+      <p class="note">This is a qualitative model of a typical sunny urban day, not a real measurement.</p>
+    </div>
+  </div>
+</section>
+
+<!-- VIBRATIONS -->
+<section id="vibrations" class="mod">
+  <h1>Why do CO₂ and H₂O trap heat, but N₂ and O₂ do not?</h1>
+  <div class="grid">
+    <div>
+      <canvas id="vbC" style="height:56vh;cursor:grab"></canvas>
+      <div class="row" id="vbMols"></div>
+      <div class="row" id="vbModes"></div>
+    </div>
+    <div>
+      <div class="panel">
+        <div class="big" id="vbTitle"></div>
+        <div id="vbActive" style="font-size:1.3em;font-weight:700;margin:.3rem 0"></div>
+        <div id="vbInfo"></div>
+      </div>
+      <canvas id="vbS" style="height:20vh"></canvas>
+      <p class="note">The curve shows Earth's infrared glow, modeled as a 288 K blackbody. The line marks where this vibration would absorb. Motion is exaggerated, and the arrow points toward the δ⁻ end.</p>
+      <div class="prompt"><b>Predict:</b> N₂ and O₂ make up 99% of the air. Why are they <i>not</i> greenhouse gases?</div>
+      <button class="reveal" data-for="vbA1">Reveal</button>
+      <div class="answer" id="vbA1">A molecule absorbs IR only if its vibration <b>changes its dipole moment</b>. N₂ and O₂ are symmetric, so stretching never creates a dipole. CO₂ has no permanent dipole, but its bend and asymmetric stretch do change the dipole. The 15 µm bend sits near the peak of Earth's IR glow.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CO2 AI -->
+<section id="co2" class="mod">
+  <h1>Can AI forecast CO₂? Class vs. model</h1>
+  <div class="grid">
+    <div>
+      <canvas id="coC" style="height:58vh"></canvas>
+      <div class="row">
+        <span>Train on data up to:</span><b id="coCutL"></b>
+        <input id="coCut" type="range" min="1975" max="2025.75" step="0.25" value="2025.75" style="flex:1;min-width:12rem">
+      </div>
+      <div class="row">
+        <button id="coLin">Model: straight line + seasons</button><button id="coQuad" class="sel">Model: curve + seasons</button><button id="coZoom">Zoom: recent years</button>
+      </div>
+    </div>
+    <div>
+      <div class="panel">
+        <h2>Step 1: Class prediction</h2>
+        <p>What was the CO₂ level at Mauna Loa in <b id="coTgtL"></b>?</p>
+        <div class="big" style="color:var(--amber)"><span id="coGuessV"></span> ppm</div>
+        <input id="coGuess" type="range" min="400" max="450" step="0.5" value="425">
+        <div class="row"><button class="primary" id="coTrain">Step 2: Train the model</button><button class="reveal" id="coReveal">Step 3: Reveal the real data</button></div>
+        <div class="kv" id="coOut" style="margin-top:.5rem"></div>
+      </div>
+      <div class="prompt"><b>Discuss:</b> The model learned the trend and the seasonal cycle. Why does CO₂ fall each northern summer? What could make the forecast wrong?</div>
+      <button class="reveal" data-for="coA1">Reveal</button>
+      <div class="answer" id="coA1">In northern summer, plants take in CO₂; in winter, decay and fuel use release it. The model only fits patterns using least-squares learning. It does not understand physics, emissions policy, volcanoes or El Niño. Try training only up to 1990 and see how far a straight-line model misses the present.</div>
+      <p class="note">Data: NOAA GML, Mauna Loa monthly mean CO₂ (snapshot through 2026-09). Model: least-squares fit of trend + 1-year and 6-month sine and cosine terms.</p>
+    </div>
+  </div>
+</section>
+
+<!-- QUIZ -->
+<section id="quiz" class="mod">
+  <h1>Quick check: raise your hand for A, B, C or D</h1>
+  <div class="panel" style="max-width:62rem">
+    <div class="note" id="qzNum"></div>
+    <div id="qzQ" style="font-size:1.35em;font-weight:700;margin:.4rem 0 .6rem"></div>
+    <div id="qzOpts"></div>
+    <div class="answer" id="qzExp"></div>
+    <div class="row" style="margin-top:.7rem"><button id="qzPrev">◀ Previous</button><button class="reveal" id="qzRev">Reveal</button><button class="primary" id="qzNext">Next ▶</button></div>
+  </div>
+</section>
+</main>
+
+<script>const CO2=[[1958,3,315.71],[1958,4,317.45],[1958,5,317.51],[1958,6,317.27],[1958,7,315.87],[1958,8,314.93],[1958,9,313.21],[1958,10,312.42],[1958,11,313.33],[1958,12,314.67],[1959,1,315.58],[1959,2,316.49],[1959,3,316.65],[1959,4,317.72],[1959,5,318.29],[1959,6,318.15],[1959,7,316.54],[1959,8,314.8],[1959,9,313.84],[1959,10,313.33],[1959,11,314.81],[1959,12,315.58],[1960,1,316.43],[1960,2,316.98],[1960,3,317.58],[1960,4,319.03],[1960,5,320.03],[1960,6,319.58],[1960,7,318.18],[1960,8,315.9],[1960,9,314.17],[1960,10,313.83],[1960,11,315],[1960,12,316.19],[1961,1,316.89],[1961,2,317.7],[1961,3,318.54],[1961,4,319.48],[1961,5,320.58],[1961,6,319.77],[1961,7,318.56],[1961,8,316.79],[1961,9,314.99],[1961,10,315.31],[1961,11,316.1],[1961,12,317.01],[1962,1,317.94],[1962,2,318.55],[1962,3,319.68],[1962,4,320.57],[1962,5,321.02],[1962,6,320.62],[1962,7,319.61],[1962,8,317.4],[1962,9,316.24],[1962,10,315.42],[1962,11,316.69],[1962,12,317.7],[1963,1,318.74],[1963,2,319.07],[1963,3,319.86],[1963,4,321.38],[1963,5,322.24],[1963,6,321.49],[1963,7,319.74],[1963,8,317.77],[1963,9,316.21],[1963,10,315.99],[1963,11,317.07],[1963,12,318.35],[1964,1,319.57],[1964,2,320.04],[1964,3,320.75],[1964,4,321.84],[1964,5,322.25],[1964,6,321.89],[1964,7,320.44],[1964,8,318.69],[1964,9,316.71],[1964,10,316.87],[1964,11,317.68],[1964,12,318.71],[1965,1,319.44],[1965,2,320.44],[1965,3,320.89],[1965,4,322.14],[1965,5,322.17],[1965,6,321.87],[1965,7,321.21],[1965,8,318.87],[1965,9,317.82],[1965,10,317.3],[1965,11,318.87],[1965,12,319.42],[1966,1,320.62],[1966,2,321.6],[1966,3,322.39],[1966,4,323.7],[1966,5,324.08],[1966,6,323.75],[1966,7,322.37],[1966,8,320.36],[1966,9,318.64],[1966,10,318.1],[1966,11,319.78],[1966,12,321.02],[1967,1,322.33],[1967,2,322.5],[1967,3,323.03],[1967,4,324.41],[1967,5,325],[1967,6,324.09],[1967,7,322.54],[1967,8,320.92],[1967,9,319.25],[1967,10,319.39],[1967,11,320.73],[1967,12,321.96],[1968,1,322.57],[1968,2,323.15],[1968,3,323.89],[1968,4,325.02],[1968,5,325.57],[1968,6,325.36],[1968,7,324.14],[1968,8,322.11],[1968,9,320.33],[1968,10,320.25],[1968,11,321.32],[1968,12,322.89],[1969,1,324],[1969,2,324.41],[1969,3,325.63],[1969,4,326.66],[1969,5,327.38],[1969,6,326.71],[1969,7,325.88],[1969,8,323.66],[1969,9,322.38],[1969,10,321.78],[1969,11,322.85],[1969,12,324.11],[1970,1,325.06],[1970,2,325.99],[1970,3,326.93],[1970,4,328.13],[1970,5,328.08],[1970,6,327.67],[1970,7,326.34],[1970,8,324.68],[1970,9,323.1],[1970,10,323.06],[1970,11,324.01],[1970,12,325.13],[1971,1,326.17],[1971,2,326.69],[1971,3,327.18],[1971,4,327.78],[1971,5,328.93],[1971,6,328.57],[1971,7,327.36],[1971,8,325.43],[1971,9,323.36],[1971,10,323.56],[1971,11,324.8],[1971,12,326.01],[1972,1,326.77],[1972,2,327.63],[1972,3,327.75],[1972,4,329.72],[1972,5,330.07],[1972,6,329.09],[1972,7,328.04],[1972,8,326.32],[1972,9,324.84],[1972,10,325.2],[1972,11,326.5],[1972,12,327.55],[1973,1,328.55],[1973,2,329.57],[1973,3,330.3],[1973,4,331.5],[1973,5,332.48],[1973,6,332.07],[1973,7,330.87],[1973,8,329.31],[1973,9,327.52],[1973,10,327.19],[1973,11,328.17],[1973,12,328.65],[1974,1,329.36],[1974,2,330.71],[1974,3,331.49],[1974,4,332.65],[1974,5,333.19],[1974,6,332.2],[1974,7,331.07],[1974,8,329.15],[1974,9,327.33],[1974,10,327.28],[1974,11,328.31],[1974,12,329.58],[1975,1,330.73],[1975,2,331.46],[1975,3,331.94],[1975,4,333.11],[1975,5,333.95],[1975,6,333.42],[1975,7,331.97],[1975,8,329.95],[1975,9,328.49],[1975,10,328.36],[1975,11,329.38],[1975,12,330.77],[1976,1,331.56],[1976,2,332.74],[1976,3,333.36],[1976,4,334.74],[1976,5,334.72],[1976,6,333.97],[1976,7,333.08],[1976,8,330.68],[1976,9,328.96],[1976,10,328.72],[1976,11,330.16],[1976,12,331.62],[1977,1,332.68],[1977,2,333.17],[1977,3,334.96],[1977,4,336.14],[1977,5,336.93],[1977,6,336.17],[1977,7,334.89],[1977,8,332.56],[1977,9,331.29],[1977,10,331.28],[1977,11,332.46],[1977,12,333.6],[1978,1,334.94],[1978,2,335.26],[1978,3,336.66],[1978,4,337.69],[1978,5,338.02],[1978,6,338.01],[1978,7,336.5],[1978,8,334.42],[1978,9,332.36],[1978,10,332.45],[1978,11,333.76],[1978,12,334.91],[1979,1,336.14],[1979,2,336.69],[1979,3,338.27],[1979,4,338.82],[1979,5,339.24],[1979,6,339.26],[1979,7,337.54],[1979,8,335.72],[1979,9,333.97],[1979,10,334.24],[1979,11,335.32],[1979,12,336.81],[1980,1,337.9],[1980,2,338.34],[1980,3,340.07],[1980,4,340.93],[1980,5,341.45],[1980,6,341.36],[1980,7,339.45],[1980,8,337.67],[1980,9,336.25],[1980,10,336.14],[1980,11,337.3],[1980,12,338.29],[1981,1,339.29],[1981,2,340.55],[1981,3,341.63],[1981,4,342.6],[1981,5,343.04],[1981,6,342.54],[1981,7,340.82],[1981,8,338.48],[1981,9,336.95],[1981,10,337.05],[1981,11,338.58],[1981,12,339.91],[1982,1,340.93],[1982,2,341.76],[1982,3,342.78],[1982,4,343.96],[1982,5,344.77],[1982,6,343.88],[1982,7,342.42],[1982,8,340.24],[1982,9,338.37],[1982,10,338.41],[1982,11,339.44],[1982,12,340.78],[1983,1,341.57],[1983,2,342.78],[1983,3,343.37],[1983,4,345.4],[1983,5,346.14],[1983,6,345.76],[1983,7,344.32],[1983,8,342.51],[1983,9,340.46],[1983,10,340.53],[1983,11,341.79],[1983,12,343.2],[1984,1,344.21],[1984,2,344.92],[1984,3,345.68],[1984,4,347.37],[1984,5,347.77],[1984,6,347.16],[1984,7,345.79],[1984,8,343.74],[1984,9,341.59],[1984,10,341.86],[1984,11,343.31],[1984,12,345],[1985,1,345.48],[1985,2,346.41],[1985,3,347.91],[1985,4,348.66],[1985,5,349.28],[1985,6,348.65],[1985,7,346.9],[1985,8,345.26],[1985,9,343.47],[1985,10,343.35],[1985,11,344.73],[1985,12,346.12],[1986,1,346.78],[1986,2,347.48],[1986,3,348.25],[1986,4,349.86],[1986,5,350.52],[1986,6,349.98],[1986,7,348.25],[1986,8,346.17],[1986,9,345.48],[1986,10,344.82],[1986,11,346.22],[1986,12,347.48],[1987,1,348.73],[1987,2,348.92],[1987,3,349.81],[1987,4,351.4],[1987,5,352.15],[1987,6,351.58],[1987,7,350.21],[1987,8,348.2],[1987,9,346.66],[1987,10,346.72],[1987,11,348.08],[1987,12,349.28],[1988,1,350.51],[1988,2,351.7],[1988,3,352.5],[1988,4,353.67],[1988,5,354.35],[1988,6,353.88],[1988,7,352.8],[1988,8,350.49],[1988,9,348.97],[1988,10,349.37],[1988,11,350.42],[1988,12,351.62],[1989,1,353.07],[1989,2,353.43],[1989,3,354.08],[1989,4,355.72],[1989,5,355.95],[1989,6,355.44],[1989,7,354.05],[1989,8,351.84],[1989,9,350.09],[1989,10,350.33],[1989,11,351.55],[1989,12,352.91],[1990,1,353.86],[1990,2,355.1],[1990,3,355.75],[1990,4,356.38],[1990,5,357.38],[1990,6,356.39],[1990,7,354.89],[1990,8,353.06],[1990,9,351.38],[1990,10,351.69],[1990,11,353.14],[1990,12,354.41],[1991,1,354.93],[1991,2,355.82],[1991,3,357.33],[1991,4,358.77],[1991,5,359.23],[1991,6,358.23],[1991,7,356.3],[1991,8,353.97],[1991,9,352.34],[1991,10,352.43],[1991,11,353.89],[1991,12,355.21],[1992,1,356.34],[1992,2,357.21],[1992,3,357.97],[1992,4,359.22],[1992,5,359.71],[1992,6,359.44],[1992,7,357.15],[1992,8,354.99],[1992,9,353.01],[1992,10,353.4],[1992,11,354.42],[1992,12,355.68],[1993,1,357.1],[1993,2,357.42],[1993,3,358.59],[1993,4,359.39],[1993,5,360.3],[1993,6,359.64],[1993,7,357.45],[1993,8,355.76],[1993,9,354.14],[1993,10,354.23],[1993,11,355.53],[1993,12,357.03],[1994,1,358.36],[1994,2,359.04],[1994,3,360.11],[1994,4,361.36],[1994,5,361.78],[1994,6,360.94],[1994,7,359.51],[1994,8,357.59],[1994,9,355.86],[1994,10,356.21],[1994,11,357.65],[1994,12,359.1],[1995,1,360.04],[1995,2,361],[1995,3,361.98],[1995,4,363.44],[1995,5,363.83],[1995,6,363.33],[1995,7,361.78],[1995,8,359.33],[1995,9,358.32],[1995,10,358.14],[1995,11,359.61],[1995,12,360.82],[1996,1,362.2],[1996,2,363.36],[1996,3,364.28],[1996,4,364.69],[1996,5,365.25],[1996,6,365.06],[1996,7,363.69],[1996,8,361.55],[1996,9,359.69],[1996,10,359.72],[1996,11,361.04],[1996,12,362.39],[1997,1,363.24],[1997,2,364.21],[1997,3,364.65],[1997,4,366.49],[1997,5,366.77],[1997,6,365.73],[1997,7,364.46],[1997,8,362.4],[1997,9,360.44],[1997,10,360.97],[1997,11,362.65],[1997,12,364.51],[1998,1,365.39],[1998,2,366.1],[1998,3,367.36],[1998,4,368.79],[1998,5,369.56],[1998,6,369.13],[1998,7,367.98],[1998,8,366.1],[1998,9,364.16],[1998,10,364.54],[1998,11,365.67],[1998,12,367.3],[1999,1,368.35],[1999,2,369.28],[1999,3,369.84],[1999,4,371.15],[1999,5,371.12],[1999,6,370.46],[1999,7,369.61],[1999,8,367.06],[1999,9,364.95],[1999,10,365.52],[1999,11,366.88],[1999,12,368.26],[2000,1,369.45],[2000,2,369.71],[2000,3,370.75],[2000,4,371.98],[2000,5,371.75],[2000,6,371.87],[2000,7,370.02],[2000,8,368.27],[2000,9,367.15],[2000,10,367.18],[2000,11,368.53],[2000,12,369.83],[2001,1,370.76],[2001,2,371.69],[2001,3,372.63],[2001,4,373.55],[2001,5,374.03],[2001,6,373.4],[2001,7,371.68],[2001,8,369.78],[2001,9,368.34],[2001,10,368.61],[2001,11,369.94],[2001,12,371.42],[2002,1,372.7],[2002,2,373.37],[2002,3,374.3],[2002,4,375.19],[2002,5,375.93],[2002,6,375.69],[2002,7,374.16],[2002,8,372.03],[2002,9,370.92],[2002,10,370.73],[2002,11,372.43],[2002,12,373.98],[2003,1,375.07],[2003,2,375.82],[2003,3,376.64],[2003,4,377.92],[2003,5,378.78],[2003,6,378.46],[2003,7,376.88],[2003,8,374.57],[2003,9,373.34],[2003,10,373.31],[2003,11,374.84],[2003,12,376.17],[2004,1,377.17],[2004,2,378.05],[2004,3,379.06],[2004,4,380.54],[2004,5,380.8],[2004,6,379.87],[2004,7,377.65],[2004,8,376.17],[2004,9,374.43],[2004,10,374.63],[2004,11,376.33],[2004,12,377.68],[2005,1,378.63],[2005,2,379.91],[2005,3,380.95],[2005,4,382.48],[2005,5,382.64],[2005,6,382.4],[2005,7,380.93],[2005,8,378.93],[2005,9,376.89],[2005,10,377.19],[2005,11,378.54],[2005,12,380.31],[2006,1,381.58],[2006,2,382.4],[2006,3,382.86],[2006,4,384.8],[2006,5,385.22],[2006,6,384.24],[2006,7,382.65],[2006,8,380.6],[2006,9,379.04],[2006,10,379.33],[2006,11,380.35],[2006,12,382.02],[2007,1,383.1],[2007,2,384.12],[2007,3,384.81],[2007,4,386.73],[2007,5,386.78],[2007,6,386.33],[2007,7,384.73],[2007,8,382.24],[2007,9,381.2],[2007,10,381.37],[2007,11,382.7],[2007,12,384.19],[2008,1,385.78],[2008,2,386.06],[2008,3,386.28],[2008,4,387.33],[2008,5,388.78],[2008,6,387.99],[2008,7,386.62],[2008,8,384.32],[2008,9,383.41],[2008,10,383.22],[2008,11,384.41],[2008,12,385.79],[2009,1,387.17],[2009,2,387.7],[2009,3,389.04],[2009,4,389.76],[2009,5,390.36],[2009,6,389.7],[2009,7,388.24],[2009,8,386.29],[2009,9,384.95],[2009,10,384.64],[2009,11,386.23],[2009,12,387.63],[2010,1,388.91],[2010,2,390.41],[2010,3,391.37],[2010,4,392.67],[2010,5,393.21],[2010,6,392.38],[2010,7,390.41],[2010,8,388.54],[2010,9,387.03],[2010,10,387.43],[2010,11,388.87],[2010,12,389.99],[2011,1,391.5],[2011,2,392.05],[2011,3,392.8],[2011,4,393.44],[2011,5,394.41],[2011,6,393.95],[2011,7,392.72],[2011,8,390.33],[2011,9,389.28],[2011,10,389.19],[2011,11,390.48],[2011,12,392.06],[2012,1,393.31],[2012,2,394.04],[2012,3,394.59],[2012,4,396.38],[2012,5,396.93],[2012,6,395.91],[2012,7,394.56],[2012,8,392.59],[2012,9,391.32],[2012,10,391.27],[2012,11,393.2],[2012,12,394.57],[2013,1,395.78],[2013,2,397.03],[2013,3,397.66],[2013,4,398.64],[2013,5,400.02],[2013,6,398.81],[2013,7,397.51],[2013,8,395.39],[2013,9,393.72],[2013,10,393.9],[2013,11,395.36],[2013,12,397.03],[2014,1,398.04],[2014,2,398.27],[2014,3,399.91],[2014,4,401.51],[2014,5,401.96],[2014,6,401.43],[2014,7,399.27],[2014,8,397.18],[2014,9,395.54],[2014,10,396.16],[2014,11,397.4],[2014,12,399.08],[2015,1,400.18],[2015,2,400.55],[2015,3,401.74],[2015,4,403.35],[2015,5,404.15],[2015,6,402.97],[2015,7,401.46],[2015,8,399.11],[2015,9,397.82],[2015,10,398.49],[2015,11,400.27],[2015,12,402.06],[2016,1,402.73],[2016,2,404.25],[2016,3,405.06],[2016,4,407.6],[2016,5,407.9],[2016,6,406.99],[2016,7,404.59],[2016,8,402.45],[2016,9,401.23],[2016,10,401.79],[2016,11,403.72],[2016,12,404.64],[2017,1,406.36],[2017,2,406.66],[2017,3,407.54],[2017,4,409.22],[2017,5,409.89],[2017,6,409.08],[2017,7,407.33],[2017,8,405.32],[2017,9,403.57],[2017,10,403.82],[2017,11,405.31],[2017,12,407],[2018,1,408.15],[2018,2,408.52],[2018,3,409.59],[2018,4,410.45],[2018,5,411.44],[2018,6,410.99],[2018,7,408.9],[2018,8,407.16],[2018,9,405.71],[2018,10,406.19],[2018,11,408.21],[2018,12,409.27],[2019,1,411.03],[2019,2,411.96],[2019,3,412.18],[2019,4,413.54],[2019,5,414.86],[2019,6,414.15],[2019,7,411.96],[2019,8,410.17],[2019,9,408.76],[2019,10,408.74],[2019,11,410.47],[2019,12,411.97],[2020,1,413.59],[2020,2,414.32],[2020,3,414.72],[2020,4,416.42],[2020,5,417.28],[2020,6,416.58],[2020,7,414.58],[2020,8,412.75],[2020,9,411.5],[2020,10,411.49],[2020,11,413.1],[2020,12,414.23],[2021,1,415.49],[2021,2,416.72],[2021,3,417.61],[2021,4,419.01],[2021,5,419.09],[2021,6,418.93],[2021,7,416.9],[2021,8,414.42],[2021,9,413.26],[2021,10,413.9],[2021,11,414.97],[2021,12,416.67],[2022,1,418.13],[2022,2,419.24],[2022,3,418.76],[2022,4,420.19],[2022,5,420.97],[2022,6,420.94],[2022,7,418.85],[2022,8,417.15],[2022,9,415.91],[2022,10,415.74],[2022,11,417.47],[2022,12,418.99],[2023,1,419.48],[2023,2,420.31],[2023,3,420.99],[2023,4,423.35],[2023,5,424],[2023,6,423.68],[2023,7,421.83],[2023,8,419.68],[2023,9,418.5],[2023,10,418.82],[2023,11,420.46],[2023,12,421.86],[2024,1,422.8],[2024,2,424.55],[2024,3,425.38],[2024,4,426.51],[2024,5,426.9],[2024,6,426.91],[2024,7,425.55],[2024,8,422.99],[2024,9,422.03],[2024,10,422.38],[2024,11,423.85],[2024,12,425.4],[2025,1,426.65],[2025,2,427.09],[2025,3,428.15],[2025,4,429.64],[2025,5,430.51],[2025,6,429.61],[2025,7,427.87],[2025,8,425.48],[2025,9,424.37],[2025,10,424.87],[2025,11,426.46],[2025,12,427.49],[2026,1,428.62],[2026,2,429.35],[2026,3,430.15],[2026,4,431.12],[2026,5,432.34],[2026,6,431.43],[2026,7,429.13],[2026,8,427.55],[2026,9,426.07]];</script>
+<script>
+"use strict";
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const MODS=['home','atmosphere','photons','ozone','smog','vibrations','co2','quiz'];
+const draw={};let active='home';
+function fit(c){const r=c.getBoundingClientRect(),d=window.devicePixelRatio||1,w=Math.max(1,Math.round(r.width*d)),h=Math.max(1,Math.round(r.height*d));if(c.width!==w||c.height!==h){c.width=w;c.height=h}const x=c.getContext('2d');x.setTransform(d,0,0,d,0,0);return{x,w:r.width,h:r.height}}
+function show(){let h=location.hash.slice(1)||'home';if(!MODS.includes(h))h='home';active=h;$$('.mod').forEach(s=>s.classList.toggle('on',s.id===h));$$('nav a').forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+h))}
+addEventListener('hashchange',show);
+$$('button.reveal[data-for]').forEach(b=>b.onclick=()=>{const a=document.getElementById(b.dataset.for);a.classList.toggle('shown');b.textContent=a.classList.contains('shown')?'Hide':'Reveal'});
+$('#fsBtn').onclick=()=>document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen();
+addEventListener('keydown',e=>{if(e.target.tagName==='INPUT'&&!/^(f|r)$/i.test(e.key))return;
+  if(e.key==='f'||e.key==='F')$('#fsBtn').click();
+  else if(e.key==='r'||e.key==='R'){const b=$$('#'+active+' button.reveal').find(b=>b.dataset.for?!document.getElementById(b.dataset.for).classList.contains('shown'):b.offsetParent&&!b.disabled);b&&b.click()}
+  else if(e.key==='PageDown'||e.key==='PageUp'){e.preventDefault();const i=MODS.indexOf(active)+(e.key==='PageDown'?1:-1);location.hash=MODS[(i+MODS.length)%MODS.length]}});
+function sci(v,d=3){const e=Math.floor(Math.log10(Math.abs(v)));return(v/10**e).toFixed(d-1)+'×10'+String(e).replace('-','⁻').replace(/\d/g,c=>'⁰¹²³⁴⁵⁶⁷⁸⁹'[c])}
+function fmt(v,d=0){return v.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d})}
+
+/* ---------- 1. ATMOSPHERE ---------- */
+(()=>{
+const TP=[[0,15],[11,-56.5],[20,-56.5],[32,-44.5],[47,-2.5],[51,-2.5],[71,-58.5],[86,-86],[95,-85],[100,-78],[110,-25],[120,90]];
+const Tat=z=>{for(let i=1;i<TP.length;i++)if(z<=TP[i][0]){const a=TP[i-1],b=TP[i];return a[1]+(b[1]-a[1])*(z-a[0])/(b[0]-a[0])}return 90};
+const PZ=[];let lnP=Math.log(1013.25);for(let i=0;i<=1200;i++){PZ.push(Math.exp(lnP));lnP-=9.80665*0.0289644*100/(8.31446*(Tat(i/10+0.05)+273.15))}
+const Pat=z=>PZ[Math.round(z*10)];
+const L=[{n:'Troposphere',a:0,b:11,c:'31,111,235',i:'Weather and clouds happen here. Temperature drops about 6.5 °C per km. This layer holds about 75% of the atmosphere’s mass.'},
+{n:'Stratosphere',a:11,b:50,c:'46,160,67',i:'This is the ozone layer. Temperature <b>rises</b> because O₃ absorbs UV and releases heat. It has little vertical mixing, so CFCs that reach it stay for years.'},
+{n:'Mesosphere',a:50,b:85,c:'137,87,229',i:'This is the coldest layer; its top is about −90 °C. Little ozone absorbs UV here, so the air cools with height. Meteors burn up at about 70–100 km.'},
+{n:'Thermosphere',a:85,b:120,c:'210,153,34',i:'The air is very thin. O₂, N₂ and O absorb high-energy UV through photodissociation and photoionization, so the temperature soars. In the <b>aurora</b>, charged solar-wind particles excite O atoms, which glow green and red, and N₂⁺, which glows blue-violet.'}];
+const F=[[8.8,'Mt. Everest'],[11,'Jet airliners'],[25,'Ozone concentration peak'],[85,'Coldest point'],[100,'Edge of space (~100 km)'],[110,'Aurora (100–300 km)']];
+const c=$('#atmC'),s=$('#atmZ');let tour=null;
+function upd(){const z=+s.value,T=Tat(z),P=Pat(z),l=L.find(l=>z<=l.b)||L[3];
+ $('#atmAlt').textContent=fmt(z,1)+' km';$('#atmLayer').textContent=l.n;$('#atmLayer').style.color=`rgb(${l.c})`;
+ $('#atmT').innerHTML=`<b style="color:var(--text);font-weight:700">${fmt(T,0)} °C</b>`;
+ $('#atmP').innerHTML=`<b style="color:var(--text);font-weight:700">${P>=1?fmt(P,P>=100?0:1):sci(P,2)} hPa</b> (${P/1013.25>=0.01?fmt(P/1013.25,P/1013.25>0.1?2:3):sci(P/1013.25,2)} atm)`;
+ $('#atmBelow').innerHTML=`<b style="color:var(--text);font-weight:700">${(100*(1-P/1013.25)).toFixed(z>40?3:1)}%</b> of all the air`;
+ $('#atmInfo').innerHTML=l.i}
+s.oninput=()=>{tour&&stopTour();upd()};
+$$('#atmosphere [data-z]').forEach(b=>b.onclick=()=>{stopTour();s.value=b.dataset.z;upd()});
+function stopTour(){if(tour){cancelAnimationFrame(tour);tour=null;$('#atmTour').textContent='▶ Launch tour'}}
+$('#atmTour').onclick=()=>{if(tour)return stopTour();if(+s.value>=119)s.value=0;$('#atmTour').textContent='■ Stop';const step=()=>{s.value=Math.min(120,+s.value+0.12);upd();tour=+s.value<120?requestAnimationFrame(step):(stopTour(),null)};tour=requestAnimationFrame(step)};
+c.onpointerdown=e=>{const r=c.getBoundingClientRect(),z=120*(1-(e.clientY-r.top-20)/(r.height-60));stopTour();s.value=Math.max(0,Math.min(120,z));upd()};
+draw.atmosphere=()=>{const{x,w,h}=fit(c),m={l:70,r:120,t:20,b:40},W=w-m.l-m.r,H=h-m.t-m.b,X=T=>m.l+(T+100)/200*W,Y=z=>m.t+H*(1-z/120),t=performance.now()/1000;
+ x.clearRect(0,0,w,h);
+ L.forEach(l=>{x.fillStyle=`rgba(${l.c},.18)`;x.fillRect(m.l,Y(l.b),W,Y(l.a)-Y(l.b));x.fillStyle=`rgb(${l.c})`;x.font='bold 15px Arial';x.fillText(l.n,m.l+8,Y(l.b)+20)});
+ for(let z=100;z<120;z+=1){const a=.18*(0.6+0.4*Math.sin(t*1.5+z*.3+Math.sin(t*.7)*2));x.fillStyle=`rgba(80,255,140,${a*(1-(z-100)/40)})`;x.fillRect(m.l+W*0.42+Math.sin(z*.5+t)*8,Y(z+1),W*0.36,Y(z)-Y(z+1)+1)}
+ x.fillStyle='rgba(114,231,153,.5)';x.beginPath();x.moveTo(m.l+W,Y(0));for(let z=0;z<=60;z+=.5)x.lineTo(m.l+W+70*Math.exp(-((z-25)**2)/(2*7**2)),Y(z));x.lineTo(m.l+W,Y(60));x.fill();
+ x.fillStyle='#72e799';x.font='13px Arial';x.fillText('O₃',m.l+W+46,Y(25)+4);
+ x.strokeStyle='#30363d';x.lineWidth=1;x.fillStyle='#b8c0cc';x.font='13px Arial';
+ for(let T=-100;T<=100;T+=50){x.beginPath();x.moveTo(X(T),m.t);x.lineTo(X(T),m.t+H);x.stroke();x.fillText(T+' °C',X(T)-16,h-18)}
+ for(let z=0;z<=120;z+=20){x.fillText(z+' km',12,Y(z)+4)}
+ x.strokeStyle='#f5f5f5';x.lineWidth=3.5;x.beginPath();for(let z=0;z<=120;z+=.5){const p=[X(Tat(z)),Y(z)];z?x.lineTo(...p):x.moveTo(...p)}x.stroke();
+ x.fillStyle='#b8c0cc';x.font='12px Arial';F.forEach(([z,n])=>{x.fillRect(m.l+W-4,Y(z),8,1.5);x.textAlign='right';x.fillText(n,m.l+W-8,z===8.8?Y(z)+13:Y(z)-3);x.textAlign='left'});
+ const z=+s.value;x.strokeStyle='#ffb454';x.setLineDash([6,5]);x.lineWidth=2;x.beginPath();x.moveTo(m.l,Y(z));x.lineTo(m.l+W,Y(z));x.stroke();x.setLineDash([]);
+ x.fillStyle='#ffb454';x.beginPath();x.arc(X(Tat(z)),Y(z),9,0,7);x.fill();
+ const P=Pat(z)/1013.25;x.fillStyle='#21262d';x.fillRect(w-28,m.t,16,H);x.fillStyle='#6cb6ff';x.fillRect(w-28,m.t+H*(1-P),16,H*P);
+ x.save();x.translate(w-34,m.t+H/2);x.rotate(-Math.PI/2);x.fillStyle='#b8c0cc';x.textAlign='center';x.fillText('air above you (pressure)',0,0);x.restore()};
+upd();})();
+
+/* ---------- 2. PHOTONS ---------- */
+(()=>{
+const P=[{t:'ion',n:'N₂ → N₂⁺ + e⁻',E:1495,w:'Thermosphere'},{t:'ion',n:'O → O⁺ + e⁻',E:1313,w:'Thermosphere'},{t:'ion',n:'O₂ → O₂⁺ + e⁻',E:1205,w:'Thermosphere'},{t:'diss',n:'N₂ → 2 N',E:941,w:'Thermosphere; the N≡N triple bond is very strong'},{t:'ion',n:'NO → NO⁺ + e⁻',E:890,w:'Upper atmosphere'},{t:'diss',n:'O₂ → 2 O',E:495,w:'Stratosphere and above; starts ozone formation'},{t:'diss',n:'NO₂ → NO + O',E:304,w:'Ground level; starts photochemical smog'}];
+const lo=50,hi=1100,s=$('#phL'),c=$('#phC');const toNm=v=>lo*(hi/lo)**(v/1000),toV=nm=>1000*Math.log(nm/lo)/Math.log(hi/lo);
+$('#phRows').innerHTML='<div class="proc note"><span>Process</span><span>Needs</span><span>Photon energy vs. needed</span><span>Possible?</span></div>'+P.map((p,i)=>`<div class="proc"><span><span class="tag t-${p.t}">${p.t==='ion'?'ionize':'break'}</span>${p.n}<br><span class="note">${p.w}</span></span><span>${p.E} kJ/mol<br><span class="note">λ ≤ ${(119627/p.E).toFixed(0)} nm</span></span><span class="bar"><i id="phB${i}"></i></span><span id="phY${i}"></span></div>`).join('');
+const region=nm=>nm<100?['Extreme UV: absorbed in the thermosphere','#c9a3ff']:nm<280?['UV-C: absorbed by O₂ and O₃; never reaches the ground','#b48cff']:nm<315?['UV-B: mostly absorbed by the ozone layer; causes sunburn','#9a7cff']:nm<400?['UV-A: reaches the ground','#7f74ff']:nm<700?['Visible light',wl(nm)]:['Infrared: too little energy to break bonds','#ff6a5c'];
+function wl(nm){const h=nm<440?270-(nm-400)/40*30:nm<490?240-(nm-440)/50*60:nm<510?180-(nm-490)/20*60:nm<580?120-(nm-510)/70*60:nm<645?60-(nm-580)/65*60:0;return`hsl(${h},95%,60%)`}
+function upd(){const nm=toNm(+s.value),E=119627/nm,J=6.626e-34*2.998e8/(nm*1e-9),r=region(nm);
+ $('#phNm').textContent=fmt(nm,nm<100?1:0);$('#phKJ').textContent=fmt(E,0);$('#phRegion').textContent=r[0];$('#phRegion').style.color=r[1];
+ $('#phCalc').innerHTML=`E = hc/λ = (6.626×10⁻³⁴ J·s)(2.998×10⁸ m/s) / (${fmt(nm,1)}×10⁻⁹ m)<br>= ${sci(J)} J per photon<br>× 6.022×10²³ mol⁻¹ = <b>${fmt(E,0)} kJ/mol</b>`;
+ P.forEach((p,i)=>{const ok=E>=p.E;$('#phB'+i).style.width=Math.min(100,E/p.E*50)+'%';$('#phB'+i).style.background=ok?'var(--green)':'#6e7681';$('#phY'+i).innerHTML=ok?'<span class="yes">YES</span>':'<span class="no">no</span>'})}
+s.value=toV(242);s.oninput=upd;$$('#photons [data-nm]').forEach(b=>b.onclick=()=>{s.value=toV(+b.dataset.nm);upd()});
+draw.photons=()=>{const{x,w,h}=fit(c),m=20,W=w-2*m,X=nm=>m+W*Math.log(nm/lo)/Math.log(hi/lo);x.clearRect(0,0,w,h);
+ for(let px=0;px<W;px++){const nm=lo*(hi/lo)**(px/W);x.fillStyle=nm<400?`rgba(150,110,255,${0.25+0.5*(400-nm)/350})`:nm<700?wl(nm):`rgba(255,80,60,${Math.max(.15,.6-(nm-700)/900)})`;x.fillRect(m+px,h*0.42,1.5,h*0.3)}
+ x.font='13px Arial';x.fillStyle='#b8c0cc';[[75,'EUV'],[190,'UV-C'],[297,'UV-B'],[355,'UV-A'],[540,'visible'],[880,'infrared']].forEach(([nm,t])=>{x.textAlign='center';x.fillText(t,X(nm),h*0.38)});
+ [100,200,300,400,500,700].forEach(nm=>{x.fillText(nm,X(nm),h*0.72+16)});x.fillText('1000 nm',X(1000)-14,h*0.72+16);
+ P.forEach(p=>{const nm=119627/p.E;x.strokeStyle=p.t==='ion'?'#c9a3ff':'#6cb6ff';x.lineWidth=2;x.beginPath();x.moveTo(X(nm),h*0.42);x.lineTo(X(nm),h*0.72);x.stroke()});
+ const nm=toNm(+s.value),px=X(nm);x.fillStyle='#fff';x.beginPath();x.moveTo(px,h*0.40);x.lineTo(px-10,h*0.12);x.lineTo(px+10,h*0.12);x.fill();
+ x.strokeStyle='#fff';x.lineWidth=3;x.beginPath();x.moveTo(px,h*0.42);x.lineTo(px,h*0.72);x.stroke();
+ const t=performance.now()/1000,k=2*Math.PI/Math.max(8,nm/12);x.strokeStyle=region(nm)[1];x.lineWidth=2.5;x.beginPath();for(let i=0;i<W;i+=2){const y=h*0.88+7*Math.sin(k*i-t*6);i?x.lineTo(m+i,y):x.moveTo(m+i,y)}x.stroke();x.textAlign='left'};
+upd();})();
+
+/* ---------- 3. OZONE ---------- */
+(()=>{
+const c=$('#ozC'),hc=$('#ozH'),N0=260,PROD=1.3,K=PROD/N0;let O=[],C=[],fx=[],hist=[],st,emit=false,sink=true,last=0,frame=0;
+const rnd=()=>({x:Math.random(),y:Math.random(),a:Math.random()*7,vx:(Math.random()-.5)*.003,vy:(Math.random()-.5)*.003});
+function reset(){O=Array.from({length:N0},rnd);C=[];fx=[];hist=[];st={d:0,r:0,locked:0};upd()}
+function addCl(n){for(let i=0;i<n;i++){const p=rnd();p.vx*=1.5;p.vy*=1.5;p.s='Cl';C.push(p)}st.r+=n;upd()}
+function upd(){$('#ozN').textContent=`${O.length} (${Math.round(100*O.length/N0)}%)`;$('#ozD').textContent=st.d;$('#ozA').textContent=C.length;$('#ozR').textContent=st.r;$('#ozPer').textContent=st.r?fmt(st.d/st.r,1):'—'}
+$('#oz1').onclick=()=>addCl(1);$('#oz10').onclick=()=>addCl(10);$('#ozReset').onclick=reset;
+$('#ozEmit').onclick=e=>{emit=!emit;e.target.textContent='CFC emissions: '+(emit?'ON':'OFF');e.target.classList.toggle('sel',emit)};
+$('#ozSink').onclick=e=>{sink=!sink;e.target.textContent='Cl sinks (HCl, ClONO₂): '+(sink?'ON':'OFF');e.target.classList.toggle('sel',sink)};
+const mv=(p,k)=>{p.x+=p.vx*k;p.y+=p.vy*k;if(p.x<0||p.x>1)p.vx*=-1;if(p.y<0||p.y>1)p.vy*=-1;p.x=Math.max(0,Math.min(1,p.x));p.y=Math.max(0,Math.min(1,p.y))};
+function step(k){frame++;
+ let b=PROD*k;while(b>0){if(Math.random()<b)O.push(rnd());b-=1}
+ O=O.filter(o=>Math.random()>K*k);O.forEach(o=>mv(o,k));
+ if(emit&&frame%30===0)addCl(1);
+ const R2=0.024**2;
+ C=C.filter(cl=>{mv(cl,k);
+  if(cl.s==='Cl'){for(let i=0;i<O.length;i++){const dx=O[i].x-cl.x,dy=O[i].y-cl.y;if(dx*dx+dy*dy<R2){fx.push({x:O[i].x,y:O[i].y,t:0});O.splice(i,1);cl.s='ClO';st.d++;break}}}
+  else if(Math.random()<0.035*k)cl.s='Cl';
+  if(sink&&Math.random()<0.0005*k){st.locked++;return false}return true});
+ if(frame%4===0){hist.push(O.length);if(hist.length>600)hist.shift()}}
+draw.ozone=()=>{const now=performance.now(),k=last?Math.min(3,(now-last)/16.7):1;last=now;step(k);if(frame%6===0)upd();
+ const{x,w,h}=fit(c);x.fillStyle='#071222';x.fillRect(0,0,w,h);
+ const r=Math.max(3,w/260);
+ x.fillStyle='#6cb6ff';O.forEach(o=>{for(let j=0;j<3;j++){x.beginPath();x.arc(o.x*w+r*1.3*Math.cos(o.a+j*2.09),o.y*h+r*1.3*Math.sin(o.a+j*2.09),r,0,7);x.fill()}});
+ C.forEach(cl=>{x.fillStyle='#72e799';x.beginPath();x.arc(cl.x*w,cl.y*h,r*2,0,7);x.fill();if(cl.s==='ClO'){x.fillStyle='#ff7b72';x.beginPath();x.arc(cl.x*w+r*2.8,cl.y*h,r*1.4,0,7);x.fill()}});
+ fx=fx.filter(f=>{f.t+=k;x.strokeStyle=`rgba(255,180,84,${1-f.t/30})`;x.lineWidth=2;x.beginPath();x.arc(f.x*w,f.y*h,r+f.t*1.2,0,7);x.stroke();return f.t<30});
+ const H=fit(hc);H.x.clearRect(0,0,H.w,H.h);H.x.strokeStyle='#30363d';H.x.setLineDash([4,4]);H.x.beginPath();const yb=H.h-8-(H.h-16)*N0/(N0*1.3);H.x.moveTo(0,yb);H.x.lineTo(H.w,yb);H.x.stroke();H.x.setLineDash([]);
+ H.x.strokeStyle='#6cb6ff';H.x.lineWidth=2.5;H.x.beginPath();hist.forEach((v,i)=>{const X=i/600*H.w,Y=H.h-8-(H.h-16)*v/(N0*1.3);i?H.x.lineTo(X,Y):H.x.moveTo(X,Y)});H.x.stroke();
+ H.x.fillStyle='#b8c0cc';H.x.font='13px Arial';H.x.fillText('O₃ over time (dashed = natural level)',8,16)};
+reset();})();
+
+/* ---------- 4. SMOG ---------- */
+(()=>{
+const g=(t,m,s)=>Math.exp(-((t-m)**2)/(2*s*s));let cat=false,sunny=true,play=null;
+const f=()=>cat?0.25:1;
+const NO=t=>f()*(0.03+0.32*g(t,7.3,1.3)+0.12*g(t,18,1.5));
+const NO2=t=>f()*(0.04+0.24*g(t,9.6,1.7)+0.08*g(t,19.6,1.8))*(sunny?1:1.1);
+const O3=t=>0.02+(sunny?1:0.3)*f()**0.8*0.30*g(t,14,2.4);
+const s=$('#smT'),c=$('#smC'),sky=$('#smSky');
+const stage=t=>t<5.5?'Night: there is little traffic and no sunlight. Leftover O₃ reacts with NO.':t<8.5?'Rush hour: hot engines make NO.<br>N₂ + O₂ → 2 NO<br>2 NO + O₂ → 2 NO₂ (brown gas)':t<11?'Sunlight builds: NO₂ + hν (λ &lt; 393 nm) → NO + O<br>O + O₂ + M → O₃ + M':t<17?'Afternoon: strong sunlight drives O₃ to its peak. O₃ irritates the lungs and damages plants.':t<20?'Evening rush: more NO, but the Sun is low, so little new O₃ forms.':'Night: O₃ falls as it reacts with NO and is not replaced.';
+function upd(){const t=+s.value,hh=Math.floor(t),mm=Math.round((t-hh)*60)%60;$('#smClock').textContent=`${(hh%12)||12}:${String(mm).padStart(2,'0')} ${hh<12||hh===24?'a.m.':'p.m.'}`;
+ $('#smNO').textContent=NO(t).toFixed(2)+' ppm';$('#smNO2').textContent=NO2(t).toFixed(2)+' ppm';$('#smO3').textContent=O3(t).toFixed(2)+' ppm';$('#smStage').innerHTML=stage(t)}
+s.oninput=upd;
+$('#smCat').onclick=e=>{cat=!cat;e.target.textContent='Catalytic converters: '+(cat?'ON':'OFF');e.target.classList.toggle('sel',cat);upd()};
+$('#smSun').onclick=e=>{sunny=!sunny;e.target.textContent='Weather: '+(sunny?'sunny':'cloudy');e.target.classList.toggle('sel',sunny);upd()};
+$('#smPlay').onclick=()=>{if(play){cancelAnimationFrame(play);play=null;$('#smPlay').textContent='▶ Play day';return}if(+s.value>=23.9)s.value=0;$('#smPlay').textContent='■ Pause';const st=()=>{s.value=Math.min(24,+s.value+0.03);upd();if(+s.value<24)play=requestAnimationFrame(st);else{play=null;$('#smPlay').textContent='▶ Play day'}};play=requestAnimationFrame(st)};
+draw.smog=()=>{const t=+s.value;let{x,w,h}=fit(sky);const sun=Math.max(0,Math.sin(Math.PI*(t-6)/13));const day=t>6&&t<19;
+ const gr=x.createLinearGradient(0,0,0,h);gr.addColorStop(0,day?`rgb(${40+60*sun},${90+90*sun},${160+80*sun})`:'#0a1430');gr.addColorStop(1,day?`rgb(${150+60*sun},${190+40*sun},${230})`:'#1a2448');x.fillStyle=gr;x.fillRect(0,0,w,h);
+ if(day){const sx=w*(t-6)/13;x.fillStyle=sunny?'#ffe680':'#ddd';x.beginPath();x.arc(sx,h*(0.9-0.75*sun),h*0.13,0,7);x.fill()}
+ x.fillStyle=`rgba(150,90,30,${Math.min(.75,NO2(t)/0.32*0.7)})`;x.fillRect(0,0,w,h);
+ if(!sunny&&day){x.fillStyle='rgba(180,180,190,.55)';x.fillRect(0,0,w,h*0.45)}
+ x.fillStyle='#0b0f14';for(let i=0;i<w;i+=w/22){const bh=h*(0.25+0.45*((Math.sin(i*12.9898)*43758.5453)%1+1)/2);x.fillRect(i,h-bh,w/24,bh)}
+ ({x,w,h}=fit(c));const m={l:60,r:20,t:20,b:40},W=w-m.l-m.r,H=h-m.t-m.b,X=t=>m.l+W*t/24,Y=v=>m.t+H*(1-v/0.45);x.clearRect(0,0,w,h);
+ x.fillStyle='rgba(255,230,128,.06)';x.fillRect(X(6),m.t,X(19)-X(6),H);
+ x.strokeStyle='#30363d';x.fillStyle='#b8c0cc';x.font='13px Arial';x.lineWidth=1;
+ for(let k=0;k<=24;k+=3){x.beginPath();x.moveTo(X(k),m.t);x.lineTo(X(k),m.t+H);x.stroke();x.fillText((k%12||12)+(k<12||k===24?'a':'p'),X(k)-8,h-18)}
+ for(let v=0;v<=0.4;v+=0.1){x.fillText(v.toFixed(1),18,Y(v)+4)}x.save();x.translate(12,m.t+H/2);x.rotate(-Math.PI/2);x.textAlign='center';x.fillText('ppm (illustrative)',0,0);x.restore();
+ [[NO,'#ff9b6a','NO'],[NO2,'#c08a3e','NO₂'],[O3,'#6cb6ff','O₃']].forEach(([fn,col,n],li)=>{x.strokeStyle=col;x.lineWidth=3.5;x.beginPath();for(let k=0;k<=t;k+=0.05){k?x.lineTo(X(k),Y(fn(k))):x.moveTo(X(k),Y(fn(k)))}x.stroke();
+  x.globalAlpha=.18;x.beginPath();for(let k=0;k<=24;k+=0.1){k?x.lineTo(X(k),Y(fn(k))):x.moveTo(X(k),Y(fn(k)))}x.stroke();x.globalAlpha=1;
+  x.fillStyle=col;x.beginPath();x.arc(X(t),Y(fn(t)),6,0,7);x.fill();x.font='bold 15px Arial';x.fillText(n,X(t)+9+[0,34,68][li],Y(fn(t))-6)});
+ x.strokeStyle='#ffb454';x.setLineDash([6,5]);x.beginPath();x.moveTo(X(t),m.t);x.lineTo(X(t),m.t+H);x.stroke();x.setLineDash([])};
+upd();})();
+
+/* ---------- 5. VIBRATIONS (3D) ---------- */
+(()=>{
+const COL={O:'#ff5a4e',C:'#4a4f57',H:'#f5f5f5',N:'#4f8cff'},RAD={O:.36,C:.36,H:.24,N:.36};
+const u1=[.791,-.612,0],u2=[-.791,-.612,0],sc=(v,k)=>v.map(a=>a*k);
+const M={
+ 'CO₂':{atoms:[['O',[-1.16,0,0],-.3],['C',[0,0,0],.6],['O',[1.16,0,0],-.3]],bonds:[[0,1,2],[1,2,2]],modes:[
+  {n:'Symmetric stretch',nu:1388,d:[[-.25,0,0],[0,0,0],[.25,0,0]]},
+  {n:'Asymmetric stretch',nu:2349,d:[[.12,0,0],[-.32,0,0],[.12,0,0]]},
+  {n:'Bend',nu:667,d:[[0,.15,0],[0,-.4,0],[0,.15,0]]}]},
+ 'H₂O':{atoms:[['O',[0,.0656,0],-.66],['H',[.757,-.5204,0],.33],['H',[-.757,-.5204,0],.33]],bonds:[[0,1,1],[0,2,1]],modes:[
+  {n:'Bend',nu:1595,d:[[0,.0198,0],sc([-.612,-.791,0],.2),sc([.612,-.791,0],.2)]},
+  {n:'Symmetric stretch',nu:3657,d:[[0,.0153,0],sc(u1,.2),sc(u2,.2)]},
+  {n:'Asymmetric stretch',nu:3756,d:[[-.0198,0,0],sc(u1,.2),sc([.791,.612,0],.2)]}]},
+ 'N₂':{atoms:[['N',[-.55,0,0],0],['N',[.55,0,0],0]],bonds:[[0,1,3]],modes:[{n:'Stretch',nu:2331,d:[[-.15,0,0],[.15,0,0]]}]},
+ 'O₂':{atoms:[['O',[-.605,0,0],0],['O',[.605,0,0],0]],bonds:[[0,1,2]],modes:[{n:'Stretch',nu:1556,d:[[-.15,0,0],[.15,0,0]]}]}};
+let mol='CO₂',mi=2,yaw=.5,pitch=.35,drag=null,ph=0,trace=[];
+const c=$('#vbC'),sp=$('#vbS');
+const dmu=()=>{const m=M[mol],md=m.modes[mi];return m.atoms.reduce((s,a,i)=>s.map((v,k)=>v+a[2]*md.d[i][k]),[0,0,0])};
+function render(){ $('#vbMols').innerHTML=Object.keys(M).map(k=>`<button class="${k===mol?'sel':''}" data-m="${k}">${k}</button>`).join('');
+ $('#vbModes').innerHTML=M[mol].modes.map((md,i)=>`<button class="${i===mi?'sel':''}" data-i="${i}">${md.n}</button>`).join('');
+ $$('#vbMols button').forEach(b=>b.onclick=()=>{mol=b.dataset.m;mi=M[mol].modes.length===3&&mol==='CO₂'?2:0;trace=[];render()});
+ $$('#vbModes button').forEach(b=>b.onclick=()=>{mi=+b.dataset.i;trace=[];render()});
+ const md=M[mol].modes[mi],act=Math.hypot(...dmu())>1e-3,um=1e4/md.nu;
+ $('#vbTitle').textContent=`${mol}: ${md.n.toLowerCase()}`;
+ $('#vbActive').innerHTML=act?'<span class="yes">IR-active: absorbs infrared</span>':'<span class="no" style="color:var(--red)">IR-inactive: no dipole change</span>';
+ $('#vbInfo').innerHTML=`Vibration: ${md.nu} cm⁻¹ → λ ≈ <b>${um.toFixed(1)} µm</b><br>`+(act?(mol==='CO₂'&&mi===2?'This is CO₂’s main greenhouse band, close to the peak of Earth’s infrared glow.':mol==='H₂O'?'Water vapor is the largest natural greenhouse gas. Its pure-rotation bands also absorb strongly at λ > 20 µm.':'The changing dipole couples to light’s oscillating electric field.'):'The atoms move symmetrically, so the dipole stays zero. Light’s electric field has nothing to push on.')}
+c.onpointerdown=e=>{drag=[e.clientX,e.clientY];c.setPointerCapture(e.pointerId);c.style.cursor='grabbing'};
+c.onpointermove=e=>{if(!drag)return;yaw+=(e.clientX-drag[0])*.01;pitch+=(e.clientY-drag[1])*.01;drag=[e.clientX,e.clientY]};
+c.onpointerup=()=>{drag=null;c.style.cursor='grab'};
+const rot=p=>{const[cy,sy,cp,sp2]=[Math.cos(yaw),Math.sin(yaw),Math.cos(pitch),Math.sin(pitch)];const x1=p[0]*cy+p[2]*sy,z1=-p[0]*sy+p[2]*cy;return[x1,p[1]*cp-z1*sp2,p[1]*sp2+z1*cp]};
+draw.vibrations=()=>{const{x,w,h}=fit(c),m=M[mol],md=m.modes[mi],S=Math.min(w,h)/4.6,cx=w/2,cy=h*0.4;if(!drag)yaw+=.004;ph+=.07;const a=Math.sin(ph);
+ x.clearRect(0,0,w,h);
+ const pos=m.atoms.map((at,i)=>at[1].map((v,k)=>v+a*md.d[i][k]));
+ const proj=p=>{const r=rot(p),f=6/(6+r[2]);return[cx+r[0]*S*f,cy-r[1]*S*f,r[2],f]};
+ const P=pos.map(proj);
+ const items=[...m.bonds.map(b=>({z:(P[b[0]][2]+P[b[1]][2])/2+.01,b})),...m.atoms.map((at,i)=>({z:P[i][2],i}))].sort((p,q)=>q.z-p.z);
+ items.forEach(it=>{if(it.b){const[i,j,n]=it.b,A=P[i],B=P[j],dx=B[0]-A[0],dy=B[1]-A[1],L=Math.hypot(dx,dy)||1,ox=-dy/L,oy=dx/L;x.strokeStyle='#9aa4b2';x.lineWidth=5;for(let k=0;k<n;k++){const o=(k-(n-1)/2)*9;x.beginPath();x.moveTo(A[0]+ox*o,A[1]+oy*o);x.lineTo(B[0]+ox*o,B[1]+oy*o);x.stroke()}}
+  else{const at=m.atoms[it.i],p=P[it.i],r=RAD[at[0]]*S*p[3],g=x.createRadialGradient(p[0]-r*.35,p[1]-r*.35,r*.1,p[0],p[1],r);g.addColorStop(0,'#fff');g.addColorStop(.25,COL[at[0]]);g.addColorStop(1,'#111');x.fillStyle=g;x.beginPath();x.arc(p[0],p[1],r,0,7);x.fill();
+   if(at[2]){x.fillStyle='#fff';x.font=`bold ${Math.round(r*.7)}px Arial`;x.textAlign='center';x.fillText(at[2]>0?'δ+':'δ−',p[0],p[1]+r*.25)}}});
+ const mu=m.atoms.reduce((s,at,i)=>s.map((v,k)=>v+at[2]*pos[i][k]),[0,0,0]),mag=Math.hypot(...mu);
+ if(mag>0.004){const tip=rot(mu.map(v=>-v*2.2)),x0=cx,y0=cy,x1=cx+tip[0]*S,y1=cy-tip[1]*S,an=Math.atan2(y1-y0,x1-x0);x.strokeStyle=x.fillStyle='#ffb454';x.lineWidth=5;x.beginPath();x.moveTo(x0,y0);x.lineTo(x1,y1);x.stroke();x.beginPath();x.moveTo(x1+12*Math.cos(an),y1+12*Math.sin(an));x.lineTo(x1-10*Math.cos(an-.6),y1-10*Math.sin(an-.6));x.lineTo(x1-10*Math.cos(an+.6),y1-10*Math.sin(an+.6));x.fill()}
+ x.textAlign='left';x.fillStyle='#ffb454';x.font='bold 16px Arial';x.fillText(mag>0.004?'Dipole (arrow points to δ−)':'Dipole: zero',14,24);
+ const dm=dmu(),dl=Math.hypot(...dm);trace.push(dl>1e-3?a:0);if(trace.length>300)trace.shift();
+ const ty=h*0.86,th=h*0.1;x.strokeStyle='#30363d';x.lineWidth=1;x.beginPath();x.moveTo(20,ty);x.lineTo(w-20,ty);x.stroke();
+ x.strokeStyle=dl>1e-3?'#72e799':'#ff7b72';x.lineWidth=3;x.beginPath();trace.forEach((v,i)=>{const X=20+(w-40)*i/300,Y=ty-v*th;i?x.lineTo(X,Y):x.moveTo(X,Y)});x.stroke();
+ x.fillStyle='#b8c0cc';x.font='14px Arial';x.fillText('Change in dipole moment over time',20,ty-th-8);
+ const s2=fit(sp),W=s2.w-50,H=s2.h-40,lx=v=>30+W*(v-2)/38,B=l=>{const L=l*1e-6;return 1/(L**5*(Math.exp(1.4388e-2/(L*288))-1))},Bm=B(10.07);
+ s2.x.clearRect(0,0,s2.w,s2.h);s2.x.fillStyle='rgba(255,123,114,.25)';s2.x.strokeStyle='#ff7b72';s2.x.lineWidth=2;s2.x.beginPath();s2.x.moveTo(lx(2),10+H);for(let l=2;l<=40;l+=.2)s2.x.lineTo(lx(l),10+H-H*B(l)/Bm);s2.x.lineTo(lx(40),10+H);s2.x.fill();s2.x.stroke();
+ s2.x.fillStyle='#b8c0cc';s2.x.font='12px Arial';[5,10,15,20,30,40].forEach(l=>s2.x.fillText(l+' µm',lx(l)-12,s2.h-12));
+ const um=1e4/md.nu;s2.x.strokeStyle=dl>1e-3?'#72e799':'#6e7681';s2.x.lineWidth=4;if(dl<=1e-3)s2.x.setLineDash([6,6]);s2.x.beginPath();s2.x.moveTo(lx(um),8);s2.x.lineTo(lx(um),10+H);s2.x.stroke();s2.x.setLineDash([]);
+ s2.x.fillStyle='#f5f5f5';s2.x.font='bold 13px Arial';s2.x.fillText(`${um.toFixed(1)} µm`,lx(um)+6,22)};
+render();})();
+
+/* ---------- 6. CO2 AI ---------- */
+(()=>{
+const D=CO2.map(r=>({t:r[0]+(r[1]-.5)/12,v:r[2],y:r[0],m:r[1]}));
+const MON=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const tg=D.filter(d=>d.m===5).pop();let quad=true,stage=0,zoom=true,model=null;
+$('#coTgtL').textContent=`${MON[tg.m-1]} ${tg.y}`;
+const s=$('#coCut'),c=$('#coC');
+const feats=(t,tc)=>{const x=(t-tc)/10,f=[1,x];if(quad)f.push(x*x);f.push(Math.sin(2*Math.PI*t),Math.cos(2*Math.PI*t),Math.sin(4*Math.PI*t),Math.cos(4*Math.PI*t));return f};
+function solve(A,b){const n=b.length;for(let i=0;i<n;i++){let p=i;for(let r=i+1;r<n;r++)if(Math.abs(A[r][i])>Math.abs(A[p][i]))p=r;[A[i],A[p]]=[A[p],A[i]];[b[i],b[p]]=[b[p],b[i]];for(let r=i+1;r<n;r++){const f=A[r][i]/A[i][i];for(let k=i;k<n;k++)A[r][k]-=f*A[i][k];b[r]-=f*b[i]}}const x=Array(n).fill(0);for(let i=n-1;i>=0;i--){let s=b[i];for(let k=i+1;k<n;k++)s-=A[i][k]*x[k];x[i]=s/A[i][i]}return x}
+function train(){const cut=+s.value,tr=D.filter(d=>d.t<cut),tc=cut,n=feats(0,tc).length,A=Array.from({length:n},()=>Array(n).fill(0)),b=Array(n).fill(0);
+ tr.forEach(d=>{const f=feats(d.t,tc);for(let i=0;i<n;i++){b[i]+=f[i]*d.v;for(let k=0;k<n;k++)A[i][k]+=f[i]*f[k]}});
+ const w=solve(A,b),pred=t=>feats(t,tc).reduce((s,f,i)=>s+f*w[i],0),rm=a=>Math.sqrt(a.reduce((s,d)=>s+(pred(d.t)-d.v)**2,0)/a.length);
+ const te=D.filter(d=>d.t>=cut);model={pred,cut,trR:rm(tr),teR:te.length?rm(te):0,rate:w[1]/10,amp:Math.hypot(w[quad?3:2],w[quad?4:3])}}
+function out(){const g=+$('#coGuess').value;$('#coGuessV').textContent=g.toFixed(1);const o=$('#coOut');
+ if(stage<1){o.innerHTML='<b>Model</b><span>not trained yet</span>';return}
+ const p=model.pred(tg.t);let h=`<b>Training months</b><span>${D.filter(d=>d.t<model.cut).length}</span><b>Learned growth</b><span>${model.rate.toFixed(2)} ppm/yr (at the cutoff)</span><b>Seasonal swing</b><span>±${model.amp.toFixed(1)} ppm</span><b>Model forecast</b><span class="big" style="font-size:1.4em;color:var(--blue)">${p.toFixed(1)} ppm</span>`;
+ if(stage>1)h+=`<b>Actual</b><span class="big" style="font-size:1.4em;color:var(--green)">${tg.v.toFixed(1)} ppm</span><b>Class error</b><span style="color:var(--amber)">${(g-tg.v>=0?'+':'')+(g-tg.v).toFixed(1)} ppm</span><b>Model error</b><span style="color:var(--blue)">${(p-tg.v>=0?'+':'')+(p-tg.v).toFixed(1)} ppm</span><b>Test RMSE</b><span>${model.teR.toFixed(2)} ppm over ${D.filter(d=>d.t>=model.cut).length} hidden months</span>`;
+ o.innerHTML=h}
+function lab(){const v=+s.value,y=Math.floor(v-1e-9),mo=Math.round((v-y)*12);$('#coCutL').textContent=`${MON[(mo+11)%12].slice(0,3)} ${mo===0?y-1:y}`}
+s.oninput=()=>{lab();if(stage>0)train();out()};$('#coGuess').oninput=out;
+$('#coTrain').onclick=()=>{train();stage=Math.max(stage,1);out()};
+$('#coReveal').onclick=()=>{if(stage<1)train();stage=2;out()};
+const setM=q=>{quad=q;$('#coQuad').classList.toggle('sel',q);$('#coLin').classList.toggle('sel',!q);if(stage>0)train();out()};
+$('#coLin').onclick=()=>setM(false);$('#coQuad').onclick=()=>setM(true);
+$('#coZoom').onclick=e=>{zoom=!zoom;e.target.textContent='Zoom: '+(zoom?'recent years':'full record')};
+draw.co2=()=>{const{x,w,h}=fit(c),m={l:60,r:20,t:20,b:40},W=w-m.l-m.r,H=h-m.t-m.b,cut=+s.value,t0=zoom?Math.min(cut-4,2018.5):1958,t1=zoom?2027.5:2031;
+ const vis=D.filter(d=>d.t>=t0),v0=Math.floor((Math.min(...vis.map(d=>d.v))-3)/10)*10,v1=Math.ceil((Math.max(...D.map(d=>d.v))+6)/10)*10,X=t=>m.l+W*(t-t0)/(t1-t0),Y=v=>m.t+H*(1-(v-v0)/(v1-v0));
+ x.clearRect(0,0,w,h);x.strokeStyle='#30363d';x.fillStyle='#b8c0cc';x.font='13px Arial';x.lineWidth=1;
+ const ys=(t1-t0)>25?10:(t1-t0)>12?5:1;for(let y=Math.ceil(t0/ys)*ys;y<=t1;y+=ys){x.beginPath();x.moveTo(X(y),m.t);x.lineTo(X(y),m.t+H);x.stroke();x.fillText(y,X(y)-14,h-16)}
+ const vs=(v1-v0)>60?20:5;for(let v=v0;v<=v1;v+=vs){x.beginPath();x.moveTo(m.l,Y(v));x.lineTo(m.l+W,Y(v));x.stroke();x.fillText(v,18,Y(v)+4)}
+ x.fillStyle='rgba(255,180,84,.08)';x.fillRect(X(Math.max(cut,t0)),m.t,X(t1)-X(Math.max(cut,t0)),H);x.fillStyle='#ffb454';x.font='bold 15px Arial';{const lx=X(Math.max(cut,t0));x.textAlign=lx>m.l+W*0.7?'right':'left';x.fillText(stage>1?'hidden data revealed':'hidden from the model',x.textAlign==='right'?m.l+W-8:lx+8,m.t+18);x.textAlign='left'}
+ const line=(arr,col,lw)=>{x.strokeStyle=col;x.lineWidth=lw;x.beginPath();arr.forEach((d,i)=>{i?x.lineTo(X(d.t),Y(d.v)):x.moveTo(X(d.t),Y(d.v))});x.stroke()};
+ line(vis.filter(d=>d.t<cut),'#f5f5f5',zoom?3:1.8);
+ if(stage>0&&model){const a=[];for(let t=Math.max(t0,1958.2);t<=t1;t+=1/48)a.push({t,v:model.pred(t)});x.setLineDash([]);line(a.filter(d=>d.t<cut),'rgba(108,182,255,.55)',2);x.setLineDash([8,6]);line(a.filter(d=>d.t>=cut),'#6cb6ff',3);x.setLineDash([])}
+ if(stage>1)line(vis.filter(d=>d.t>=cut),'#72e799',3.5);
+ const g=+$('#coGuess').value;x.fillStyle='#ffb454';x.beginPath();x.arc(X(tg.t),Y(g),8,0,7);x.fill();x.font='bold 14px Arial';x.fillText('class',X(tg.t)+10,Y(g)+5);
+ if(stage>0){x.fillStyle='#6cb6ff';x.beginPath();x.arc(X(tg.t),Y(model.pred(tg.t)),8,0,7);x.fill()}
+ if(stage>1){x.fillStyle='#72e799';x.beginPath();x.arc(X(tg.t),Y(tg.v),8,0,7);x.fill()}
+ x.font='14px Arial';[['#f5f5f5','training data'],['#6cb6ff','model'],['#72e799','actual (hidden)']].forEach(([col,t],i)=>{x.fillStyle=col;x.fillRect(m.l+12,m.t+34+i*20,16,4);x.fillText(t,m.l+34,m.t+40+i*20)});
+ x.save();x.translate(14,m.t+H/2);x.rotate(-Math.PI/2);x.textAlign='center';x.fillStyle='#b8c0cc';x.fillText('CO₂ (ppm)',0,0);x.restore()};
+lab();out();})();
+
+/* ---------- 7. QUIZ ---------- */
+(()=>{
+const Q=[
+['In which layer does temperature rise with altitude because ozone absorbs UV?',['Troposphere','Stratosphere','Mesosphere','Lower thermosphere'],1,'In the stratosphere, O₃ absorbs UV and releases heat.'],
+['The green glow of the aurora comes mainly from…',['Excited O atoms','CO₂ molecules','O₃ molecules','Water vapor'],0,'Charged particles excite O atoms, which emit green light at 558 nm and red light at 630 nm. N₂⁺ adds blue-violet light.'],
+['Which wavelength can photodissociate O₂, with a bond energy of 495 kJ/mol?',['800 nm','500 nm','300 nm','200 nm'],3,'λ ≤ 242 nm is needed. A 200 nm photon carries about 598 kJ/mol.'],
+['Why is clean rain naturally slightly acidic, at about pH 5.6?',['Dissolved SO₂','Dissolved CO₂ forms H₂CO₃','Ozone','Dissolved N₂'],1,'CO₂ + H₂O ⇌ H₂CO₃, a weak acid. Acid rain, at about pH 4, needs SO₂ and NOₓ, which form H₂SO₄ and HNO₃.'],
+['Acid rain dissolves marble statues because…',['CaCO₃ reacts with acid to release CO₂','Marble melts','Ozone oxidizes marble','N₂ dissolves rock'],0,'CaCO₃(s) + H₂SO₄(aq) → CaSO₄(aq) + H₂O(l) + CO₂(g)'],
+['Carbon monoxide is deadly because it…',['Is a strong acid','Binds hemoglobin about 200× more tightly than O₂','Destroys ozone','Has a strong smell'],1,'CO blocks O₂ transport. It is colorless and odorless, so use CO detectors and never run engines or generators indoors.'],
+['What does a catalytic converter do?',['Filters exhaust like a sieve','Converts CO, hydrocarbons and NO into CO₂, H₂O and N₂','Adds O₃ to exhaust','Stores CO₂'],1,'It is a chemical conversion on Pt, Pd and Rh surfaces, not a filter.'],
+['Which gas is NOT a greenhouse gas?',['CO₂','H₂O','CH₄','N₂'],3,'N₂ is symmetric. Its vibration does not change the dipole, so it cannot absorb IR.'],
+['One Cl atom can destroy many O₃ molecules because chlorine is a…',['Reactant used up once','Catalyst that is regenerated','Product of ozone','Noble gas'],1,'Cl + O₃ → ClO + O₂, then ClO + O → Cl + O₂. Cl comes back each cycle.']];
+let i=0,shown=false;
+function r(){const q=Q[i];$('#qzNum').textContent=`Question ${i+1} of ${Q.length}`;$('#qzQ').textContent=q[0];
+ $('#qzOpts').innerHTML=q[1].map((o,k)=>`<button class="opt ${shown?(k===q[2]?'right':'wrong'):''}">${'ABCD'[k]}. ${o}</button>`).join('');
+ $('#qzExp').innerHTML=`<b>${'ABCD'[q[2]]}.</b> ${q[3]}`;$('#qzExp').classList.toggle('shown',shown);$('#qzRev').textContent=shown?'Hide':'Reveal'}
+$('#qzRev').onclick=()=>{shown=!shown;r()};$('#qzNext').onclick=()=>{i=(i+1)%Q.length;shown=false;r()};$('#qzPrev').onclick=()=>{i=(i-1+Q.length)%Q.length;shown=false;r()};
+r();})();
+
+show();
+(function loop(){try{draw[active]&&draw[active]()}catch(e){console.error(e)}requestAnimationFrame(loop)})();
+</script>
+</body>
+</html>
